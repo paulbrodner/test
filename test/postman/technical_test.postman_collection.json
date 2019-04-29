@@ -1,0 +1,557 @@
+{
+	"info": {
+		"_postman_id": "9fb0afab-506c-4f20-ac16-63289c828105",
+		"name": "Technical Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Multiple Products",
+			"item": [
+				{
+					"name": "List All Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"// returned product list schema",
+									"var productSchema = {",
+									"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"required\": [ \"product_code\", \"name\", \"product_price\" ],",
+									"        \"properties\": {",
+									"            \"product_code\": {",
+									"                \"type\": \"integer\" ",
+									"            },",
+									"            \"name\": {",
+									"                \"type\": \"string\",",
+									"            },",
+									"            \"product_price\": {",
+									"                \"type\": \"number\",",
+									"            }",
+									"         }",
+									"    }",
+									"};",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Returned list is not empty\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    pm.expect(jsonData).to.have.lengthOf.above(0);  ",
+									"});",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"  pm.expect(tv4.validate(jsonData, productSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productsEndpoint}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productsEndpoint}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Single Product",
+			"item": [
+				{
+					"name": "Get Single Product Information",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"var productSchema = {",
+									"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"    \"type\": \"object\",",
+									"    \"required\": [ \"product_code\", \"name\", \"product_price\" ],",
+									"    \"properties\": {",
+									"        \"product_code\": {",
+									"            \"type\": \"integer\" ",
+									"        },",
+									"        \"name\": {",
+									"            \"type\": \"string\",",
+									"        },",
+									"        \"product_price\": {",
+									"            \"type\": \"number\",",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid', function() {",
+									"  pm.expect(tv4.validate(jsonData, productSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8453fcf-e642-4fd3-957e-f7e9fbd644de",
+								"exec": [
+									"// TODO: when BUG0001 has been fixed, obtain an actual product ID from API here",
+									"// var url = pm.variables.get(\"baseUrl\") + \"/\" + pm.variables.get(\"apiVersion\") + ",
+									"//     pm.variables.get(\"productsEndpoint\");",
+									"// pm.sendRequest(url, function (err, response) {",
+									"//     console.log(response.json());",
+									"// });",
+									"pm.environment.set(\"productId\", 1);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productEndpoint}}/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productEndpoint}}",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has a valid Content-Type\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8453fcf-e642-4fd3-957e-f7e9fbd644de",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "{{updateProductName}}",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "{{updateProductPrice}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productEndpoint}}/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productEndpoint}}",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product Verification",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Name has been updated\", function() {",
+									"  pm.expect(jsonData.name).to.be.equal(pm.variables.get(\"updateProductName\"));",
+									"});",
+									"",
+									"pm.test(\"Value has been updated\", function() {",
+									"  pm.expect(jsonData.product_price).to.be.equal(pm.variables.get(\"updateProductPrice\"));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8453fcf-e642-4fd3-957e-f7e9fbd644de",
+								"exec": [
+									"// TODO: when BUG0001 has been fixed, obtain an actual product ID from API here",
+									"// var url = pm.variables.get(\"baseUrl\") + \"/\" + pm.variables.get(\"apiVersion\") + ",
+									"//     pm.variables.get(\"productsEndpoint\");",
+									"// pm.sendRequest(url, function (err, response) {",
+									"//     console.log(response.json());",
+									"// });",
+									"pm.environment.set(\"productId\", 1);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productEndpoint}}/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productEndpoint}}",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has a valid Content-Type\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8453fcf-e642-4fd3-957e-f7e9fbd644de",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "{{newProductName}}",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "{{newProductPrice}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productEndpoint}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productEndpoint}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product Verification",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Newly created object is returned\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    pm.expect(jsonData).to.have.lengthOf.above(0);",
+									"    ",
+									"    // create product API doesn't return product ID hence we need to find it by finding",
+									"    // the object with product name and price identical to the ones used in create call",
+									"    var found = jsonData.filter(elem => elem.name === pm.variables.get(\"newProductName\"));",
+									"    pm.expect(found).to.not.be.null;",
+									"    pm.expect(found).to.have.lengthOf(1);",
+									"    ",
+									"    // TODO: when BUG0001 is fixed, this will be product_code",
+									"    pm.environment.set(\"createdProductId\", found[0].id);",
+									" ",
+									"    pm.expect(found.price).to.be.equal(pm.variables.get(\"newProductPrice\"));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productsEndpoint}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productsEndpoint}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has a valid Content-Type\", function() {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8453fcf-e642-4fd3-957e-f7e9fbd644de",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productEndpoint}}/{{createdProductId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productEndpoint}}",
+								"{{createdProductId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "472c7208-575c-4bee-aa18-289ea87c0d2f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a9cdcdef-a9c4-4346-825d-c8531a4a93ca",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "717427b9-33e0-427d-be6d-a8506e870bf1",
+			"key": "apiVersion",
+			"value": "v1",
+			"type": "string"
+		},
+		{
+			"id": "09085baa-3ca8-47ff-a9f2-f03c45258a1a",
+			"key": "productEndpoint",
+			"value": "/product",
+			"type": "string"
+		},
+		{
+			"id": "82d04797-a795-459c-9bcd-4368a418e9f0",
+			"key": "productsEndpoint",
+			"value": "/products",
+			"type": "string"
+		},
+		{
+			"id": "714cabf2-45e0-423c-9627-0dd2e96fc26b",
+			"key": "newProductName",
+			"value": "New Name",
+			"type": "string"
+		},
+		{
+			"id": "c998d547-3751-432c-81d6-feea06c3e38f",
+			"key": "newProductPrice",
+			"value": "42",
+			"type": "string"
+		},
+		{
+			"id": "75aeb561-9620-4a87-a848-50fd13c777ef",
+			"key": "updateProductName",
+			"value": "Updated Name",
+			"type": "string"
+		},
+		{
+			"id": "105f1731-623a-46a1-949d-09248473f013",
+			"key": "updateProductPrice",
+			"value": "52.0",
+			"type": "string"
+		}
+	]
+}
