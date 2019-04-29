@@ -1,0 +1,120 @@
+{
+	"info": {
+		"_postman_id": "9fb0afab-506c-4f20-ac16-63289c828105",
+		"name": "Technical Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List Products",
+			"item": [
+				{
+					"name": "List All Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Returned list is not empty\", function() {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    pm.expect(jsonData).to.have.lengthOf.above(0);  ",
+									"});",
+									"",
+									"var productSchema = {",
+									"    \"items\": {",
+									"         \"properties\": {",
+									"            // \"product_code\": \"integer\",",
+									"            // \"name\": \"string\",",
+									"            // \"product_price\": \"number\",",
+									"            \"foo\": \"boolean\"",
+									"         }",
+									"    }",
+									"};",
+									"console.log(\"tv=\" + tv4);",
+									"",
+									"pm.test('Schema is valid', function() {",
+									"  pm.expect(tv4.validate(jsonData[0], productSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productsEndpoint}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productsEndpoint}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "472c7208-575c-4bee-aa18-289ea87c0d2f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a9cdcdef-a9c4-4346-825d-c8531a4a93ca",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "de1fa1dc-1f48-4900-ac34-f475bb2d2b0b",
+			"key": "apiVersion",
+			"value": "v1",
+			"type": "string"
+		},
+		{
+			"id": "6a1cdd3b-dcc8-4b40-a097-63144f631215",
+			"key": "productEndpoint",
+			"value": "/product",
+			"type": "string"
+		},
+		{
+			"id": "e3080679-ea47-425c-9255-d99bf9bb8f1f",
+			"key": "productsEndpoint",
+			"value": "/products",
+			"type": "string"
+		}
+	]
+}
