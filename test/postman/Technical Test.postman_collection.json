@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "List Products",
+			"name": "Multiple Products",
 			"item": [
 				{
 					"name": "List All Products",
@@ -16,6 +16,27 @@
 							"script": {
 								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
 								"exec": [
+									"// returned product list schema",
+									"var productSchema = {",
+									"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"required\": [ \"product_code\", \"name\", \"product_price\" ],",
+									"        \"properties\": {",
+									"            \"product_code\": {",
+									"                \"type\": \"integer\" ",
+									"            },",
+									"            \"name\": {",
+									"                \"type\": \"string\",",
+									"            },",
+									"            \"product_price\": {",
+									"                \"type\": \"number\",",
+									"            }",
+									"         }",
+									"    }",
+									"};",
+									"",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
@@ -26,20 +47,8 @@
 									"    pm.expect(jsonData).to.have.lengthOf.above(0);  ",
 									"});",
 									"",
-									"var productSchema = {",
-									"    \"items\": {",
-									"         \"properties\": {",
-									"            // \"product_code\": \"integer\",",
-									"            // \"name\": \"string\",",
-									"            // \"product_price\": \"number\",",
-									"            \"foo\": \"boolean\"",
-									"         }",
-									"    }",
-									"};",
-									"console.log(\"tv=\" + tv4);",
-									"",
-									"pm.test('Schema is valid', function() {",
-									"  pm.expect(tv4.validate(jsonData[0], productSchema)).to.be.true;",
+									"pm.test('Response schema is valid', function() {",
+									"  pm.expect(tv4.validate(jsonData, productSchema)).to.be.true;",
 									"});",
 									""
 								],
@@ -73,6 +82,170 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Single Product",
+			"item": [
+				{
+					"name": "Get Single Product Information",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"var productSchema = {",
+									"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"    \"type\": \"object\",",
+									"    \"required\": [ \"product_code\", \"name\", \"product_price\" ],",
+									"    \"properties\": {",
+									"        \"product_code\": {",
+									"            \"type\": \"integer\" ",
+									"        },",
+									"        \"name\": {",
+									"            \"type\": \"string\",",
+									"        },",
+									"        \"product_price\": {",
+									"            \"type\": \"number\",",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid', function() {",
+									"  pm.expect(tv4.validate(jsonData, productSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8453fcf-e642-4fd3-957e-f7e9fbd644de",
+								"exec": [
+									"// TODO: when BUG0001 has been fixed, obtain an actual product ID from API here",
+									"// var url = pm.variables.get(\"baseUrl\") + \"/\" + pm.variables.get(\"apiVersion\") + ",
+									"//     pm.variables.get(\"productsEndpoint\");",
+									"// pm.sendRequest(url, function (err, response) {",
+									"//     console.log(response.json());",
+									"// });",
+									"pm.environment.set(\"productId\", 1);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productEndpoint}}/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productEndpoint}}",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f2d45bf7-1624-4854-9164-b79be802726b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"var productSchema = {",
+									"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"    \"type\": \"object\",",
+									"    \"required\": [ \"product_code\", \"name\", \"product_price\" ],",
+									"    \"properties\": {",
+									"        \"product_code\": {",
+									"            \"type\": \"integer\" ",
+									"        },",
+									"        \"name\": {",
+									"            \"type\": \"string\",",
+									"        },",
+									"        \"product_price\": {",
+									"            \"type\": \"number\",",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid', function() {",
+									"  pm.expect(tv4.validate(jsonData, productSchema)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8453fcf-e642-4fd3-957e-f7e9fbd644de",
+								"exec": [
+									"// TODO: when BUG0001 has been fixed, use an ID from get single product information request",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/{{apiVersion}}{{productEndpoint}}/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"{{apiVersion}}{{productEndpoint}}",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -99,21 +272,33 @@
 	],
 	"variable": [
 		{
-			"id": "de1fa1dc-1f48-4900-ac34-f475bb2d2b0b",
+			"id": "0f3643c5-5567-4125-ba98-5c189623a9fa",
 			"key": "apiVersion",
 			"value": "v1",
 			"type": "string"
 		},
 		{
-			"id": "6a1cdd3b-dcc8-4b40-a097-63144f631215",
+			"id": "4c64af43-8b35-49a2-b11f-2156675e552e",
 			"key": "productEndpoint",
 			"value": "/product",
 			"type": "string"
 		},
 		{
-			"id": "e3080679-ea47-425c-9255-d99bf9bb8f1f",
+			"id": "9feb1fb1-1199-41de-8143-b4ead549e5f0",
 			"key": "productsEndpoint",
 			"value": "/products",
+			"type": "string"
+		},
+		{
+			"id": "92050e66-011a-4cf9-816f-82b4695e6e0a",
+			"key": "newProductName",
+			"value": "New Name",
+			"type": "string"
+		},
+		{
+			"id": "d26ff22b-c6af-4cf0-b72d-ec2c163a0685",
+			"key": "newProductPrice",
+			"value": "42",
 			"type": "string"
 		}
 	]
